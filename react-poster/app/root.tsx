@@ -10,7 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
-import Post from "./components/Post";
+import PostList from "./components/PostList";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -44,10 +44,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <div>
-    <Post author='MAXIMILIAN' body="React.js is awesome!"/>
-    <Post author='MANUEL' body="Check out the full course!"/>
-    </div>
+  return <main>
+      <PostList />
+    </main>
   // return <Outlet />;
 }
 
