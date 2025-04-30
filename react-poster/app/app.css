@@ -7,7 +7,7 @@
 
 html,
 body {
-  @apply bg-blue-600 dark:bg-gray-950 m-8;
+  @apply bg-blue-600 dark:bg-gray-950 m-8 flex justify-center;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
