@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .container {
-   @apply rounded-2xl bg-fuchsia-950 p-4 w-[30rem] wrap-break-word max-h-60 overflow-auto;
+   @apply rounded-2xl bg-fuchsia-950 p-4 w-[30rem] wrap-break-word max-h-60 overflow-auto w-auto;
 }
 
 .author {
