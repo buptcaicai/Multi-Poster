@@ -8,7 +8,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/index.ts"
+    "start": "npx tsx watch src/index.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
