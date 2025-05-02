@@ -13,6 +13,7 @@ import "./app.css";
 import PostList from "./components/PostList";
 import MainHeader from "./components/MainHeader";
 import { useState } from "react";
+import { Index } from "./components/Index";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -46,13 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const [showCreateNew, setShowCreateNew] = useState(false);
-  return <>
-    <MainHeader setShowCreateNew={setShowCreateNew}/>
-    <main>
-      <PostList showCreateNew={showCreateNew} setShowCreateNew={setShowCreateNew}/>
-    </main>
-  </>
+  return <Index />;
   // return <Outlet />;
 }
 
