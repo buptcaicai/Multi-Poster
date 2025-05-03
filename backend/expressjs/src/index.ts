@@ -17,6 +17,10 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use(postRouter);
 
+app.use((req:Request, res: Response, next: NextFunction) => {
+   res.status(404).send({error: 'endpoint not found'})
+});
+
 app.listen(port, () => {
    console.log(`Server running at http://localhost:${port}`);
 })
