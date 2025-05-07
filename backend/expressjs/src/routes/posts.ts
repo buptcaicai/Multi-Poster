@@ -1,11 +1,12 @@
-import * as PostController from "../controllers/posts"
+import * as PostController from "~/controllers/posts"
+import * as LoginController from "~/controllers/login"
 
 const express = require('express')
 
 const router = express.Router()
 
+router.post('/login', LoginController.login)
 router.get('/getStoredPosts', PostController.getAllProducts)
-
 router.post('/addPost', PostController.savePost)
 
 export default router

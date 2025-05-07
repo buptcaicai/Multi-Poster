@@ -42,6 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  console.log("import.meta.env.VITE_REMOTE_ENDPOINT", import.meta.env.VITE_REMOTE_ENDPOINT)
   return <Outlet />;
 }
 
