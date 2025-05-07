@@ -1,7 +1,7 @@
 import { redirect } from "react-router";
 import type { Route } from "./+types/login";
 import LoginForm from "~/components/LoginForm";
-import { passwordLogin } from "~/utils/LoginUtils";
+import { passwordLogin } from "~/apis/login";
 
 export async function clientAction({
    request,

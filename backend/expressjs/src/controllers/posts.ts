@@ -1,7 +1,7 @@
 import { Post } from "../models/posts";
 import { Request, Response, NextFunction } from 'express';
 
-export async function getAllProducts(req:Request, res:Response, next:NextFunction) {
+export async function getAllPosts(req:Request, res:Response, next:NextFunction) {
    const posts = await Post.fetchAll();
    console.log(posts);
    res.send(posts);

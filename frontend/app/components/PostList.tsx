@@ -1,14 +1,13 @@
-import Post from "./Post"
+import { Post } from "./Post"
+import type { PostType } from "./Post"
 import NewPost from "./NewPost"
-import { useState } from "react"
 
-export default function PostList() {
-   const [posts, setPosts] = useState<{post: string, name: string}[]>([]);
+export default function PostList({posts}: {posts: Array<PostType>}) {
    return <div>
-            <NewPost onSubmit={(post:string, name:string) => setPosts((oldPosts) => [{post, name}, ...oldPosts])}/>
+            <NewPost onSubmit={(post:string, name:string) => {console.log(`new post`, {post, name})}}/>
             <div>
                <ul className="grid grid-cols-3 justify-center gap-4">
-                  {posts.map((p, idx) =>(<li key={idx}><Post author={p.name} body={p.post} /></li>))}
+                  {posts.map((p, idx) =>(<li key={idx}><Post author={p.name} body={p.text} /></li>))}
                </ul>
             </div>
          </div>
