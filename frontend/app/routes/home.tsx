@@ -1,6 +1,8 @@
 import type { Route } from "./+types/home";
 import { Index } from "~/components/Index";
 
+
+// eslint-disable-next-line no-empty-pattern
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
@@ -15,7 +17,6 @@ export async function loader() {
 
 export async function clientLoader() {
   console.log('client load')
-  await new Promise(resolve => setTimeout(resolve, 3000));
   return {clientLoader: true};
 }
 

@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import Modal from "./Modal";
-import classes from "./NewPost.module.css"
+import classes from "./Form.module.css"
 import { createNewOpenContext } from "./Index";
 
 export default function NewPost({onSubmit}: {onSubmit: (post: string, name:string) => void}) {
@@ -16,12 +16,12 @@ export default function NewPost({onSubmit}: {onSubmit: (post: string, name:strin
                                        onSubmit(newPost, newName);
                                        setOpen(false);}}>
                <p>
-                  <label className={classes.label} htmlFor="body">Text</label>
-                  <textarea className={classes.input} id= "body" required rows={3} maxLength={200} onChange={(e) => {setPost(e.target.value)}}/>
+                  <label className={classes.label}>Text</label>
+                  <textarea className={classes.input} required rows={3} maxLength={200} onChange={(e) => {setPost(e.target.value)}}/>
                </p>
                <p>
-                  <label className={classes.label} htmlFor="name">Your Name</label>
-                  <input className={classes.input} type="text" id="name" required maxLength={50} onChange={(e) => {setName(e.target.value)}}/>
+                  <label className={classes.label}>Your Name</label>
+                  <input className={classes.input} type="text" required maxLength={50} onChange={(e) => {setName(e.target.value)}}/>
                </p>
                <p className="flex gap-3">
                   <button type="submit" className={`${buttonStyle} ml-auto`}>Submit</button>

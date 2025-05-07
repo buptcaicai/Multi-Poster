@@ -1,7 +1,6 @@
 import Post from "./Post"
 import NewPost from "./NewPost"
 import { useState } from "react"
-import Modal from "./Modal";
 
 export default function PostList() {
    const [posts, setPosts] = useState<{post: string, name: string}[]>([]);

@@ -5,7 +5,6 @@ const express = require('express')
 
 const router = express.Router()
 
-router.post('/login', LoginController.login)
 router.get('/getStoredPosts', PostController.getAllProducts)
 router.post('/addPost', PostController.savePost)
 

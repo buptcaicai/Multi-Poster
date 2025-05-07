@@ -5,7 +5,7 @@ export async function getAllProducts(req:Request, res:Response, next:NextFunctio
    const posts = await Post.fetchAll();
    console.log(posts);
    res.send(posts);
-} 
+}
 
 export async function savePost(req:Request, res:Response, next:NextFunction) {
    if (!(req.body instanceof Post)) {

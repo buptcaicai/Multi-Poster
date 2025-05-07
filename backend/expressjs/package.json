@@ -11,6 +11,7 @@
     "start": "npx tsx watch src/index.ts"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.3",
     "express": "^5.1.0",
@@ -20,7 +21,9 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@types/cookie-parser": "^1.4.8",
     "ajv": "^8.17.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5"
   }
 }
