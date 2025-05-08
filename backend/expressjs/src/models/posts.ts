@@ -29,12 +29,23 @@ export class Post {
       return validate(post)
    }
 
+   static async initDB() {
+      try {
+         await fs.access(PostFileName);
+      } catch (e) {
+         console.log('error', e)
+         await fs.writeFile(PostFileName, '[]', {flag: "w"});
+      }
+   }
+
    static async fetchAll() {
+      await Post.initDB();
       const posts:Array<Post> = JSON.parse(await fs.readFile(PostFileName, {encoding: "utf-8"}))
       return posts
    }
 
    async save() {
+      await Post.initDB();
       const posts:Array<Post> = JSON.parse(await fs.readFile(PostFileName, {encoding: "utf-8"}))
       posts.push(this)
       await fs.writeFile(PostFileName, JSON.stringify(posts), {encoding: "utf-8", flag: "w+"});

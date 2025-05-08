@@ -1,10 +1,9 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import classes from "./Form.module.css"
+import { addPost } from "~/apis/posts";
 
-export default function NewPost({open, setOpen, onSubmit}: {open: boolean, 
-                                                            setOpen: (b:boolean) => void, 
-                                                            onSubmit: (post: string, name:string) => void}) {
+export default function NewPost({open, setOpen, onSubmit}: {open: boolean, setOpen: (b:boolean) => void, onSubmit: () => void}) {
    const [newPost, setPost] = useState('');
    const [newName, setName] = useState('');
 
@@ -12,9 +11,7 @@ export default function NewPost({open, setOpen, onSubmit}: {open: boolean,
 
    return  <Modal width="w-[30rem]" height="h-[30rem]" isVisible={open} setVisible={setOpen}>
             <form className="bg-purple-700 rounded-2xl w-[100%] h-[100%] p-3" 
-                     onSubmit={(e) => {e.preventDefault(); 
-                                       onSubmit(newPost, newName);
-                                       setOpen(false);}}>
+                     onSubmit={async (e) => {e.preventDefault(); await addPost(newPost, newName); setOpen(false); onSubmit();}}>
                <p>
                   <label className={classes.label}>Text</label>
                   <textarea className={classes.input} required rows={3} maxLength={200} onChange={(e) => {setPost(e.target.value)}}/>

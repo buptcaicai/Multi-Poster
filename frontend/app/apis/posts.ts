@@ -8,6 +8,16 @@ export async function getAllPosts() : Promise<Array<PostType>> {
          'Content-Type': 'application/json'
       }
    })).json()
-   console.log('response', response)
+   return response;
+}
+
+export async function addPost(text:string, name:string) {
+   const response = await (await fetch(`${remote_endpoint}/addPost`, {
+      method: "post",
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({text, name})
+   })).json()
    return response;
 }

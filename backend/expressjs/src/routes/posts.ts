@@ -6,6 +6,6 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/getAllPosts', PostController.getAllPosts)
-router.post('/addPost', PostController.savePost)
+router.post('/addPost', PostController.addPost)
 
 export default router

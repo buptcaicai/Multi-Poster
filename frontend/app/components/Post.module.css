@@ -5,9 +5,9 @@
 }
 
 .author {
-   @apply text-3xl font-bold text-green-400;
+   @apply text-3xl font-bold text-purple-400;
 }
 
 .body {
-   @apply text-[1.25rem] italic text-yellow-200;
+   @apply text-[1.25rem] italic font-medium text-purple-200;
 }
