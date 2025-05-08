@@ -1,12 +1,12 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
 import classes from "./Form.module.css"
-import { createNewOpenContext } from "./Index";
 
-export default function NewPost({onSubmit}: {onSubmit: (post: string, name:string) => void}) {
+export default function NewPost({open, setOpen, onSubmit}: {open: boolean, 
+                                                            setOpen: (b:boolean) => void, 
+                                                            onSubmit: (post: string, name:string) => void}) {
    const [newPost, setPost] = useState('');
    const [newName, setName] = useState('');
-   const {open, setOpen} = useContext(createNewOpenContext);
 
    const buttonStyle = "bg-purple-950 text-white p-3 m-2 font-bold hover:bg-transparent hover:cursor-pointer";
 

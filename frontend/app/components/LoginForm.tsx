@@ -4,7 +4,7 @@ import classes from "./Form.module.css"
 
 export default function LoginForm() {
    const fetcher = useFetcher();
-   return <div>
+   return <div className="h-screen flex flex-col items-center justify-center">
       <h1 className='flex gap-x-2 text-gray-200 text-6xl w-[100%] justify-center'>
             <MdMessage />
             React Poster
