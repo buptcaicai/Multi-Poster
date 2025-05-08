@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 .container {
-   @apply rounded-2xl bg-fuchsia-950 p-4 w-[30rem] wrap-break-word max-h-60 overflow-auto w-auto;
+   @apply rounded-2xl bg-gray-200 p-4 w-[30rem] wrap-break-word max-h-60 overflow-auto w-auto;
 }
 
 .author {
-   @apply text-3xl font-bold text-purple-400;
+   @apply text-[1.25rem] font-bold text-purple-800;
 }
 
 .body {
-   @apply text-[1.25rem] italic font-medium text-purple-200;
+   @apply text-2xl italic font-medium ;
 }

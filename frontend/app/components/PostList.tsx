@@ -5,7 +5,6 @@ import { MdPostAdd } from "react-icons/md"
 import { useState } from "react";
 import { useRevalidator } from "react-router";
 
-
 export default function PostList({posts}: {posts: Array<PostType>}) {
    const revalidator = useRevalidator();
    const [newPostOpen, setNewPostOpen] = useState(false);

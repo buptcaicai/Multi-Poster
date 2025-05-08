@@ -1,3 +1,4 @@
+import { getBearer } from "~/utils/localStorage";
 import { remote_endpoint } from "./constants";
 import type { PostType } from "~/components/Post";
 
