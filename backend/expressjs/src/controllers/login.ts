@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 
-
 const username='weimin';
 const password='123456';
 
-
 export const loginRequiredError = 'Login Required';
+export let bearer: string | null;
 
 export async function passwordLogin(req:Request, res:Response, next:NextFunction) {
    console.log('req.body', req.body);
@@ -15,13 +14,11 @@ export async function passwordLogin(req:Request, res:Response, next:NextFunction
    }
 
    const target = `${password}123123h${new Date().getHours()}`;
-   const bearer = crypto.createHash('md5').update(target).digest('hex');
+   bearer = crypto.createHash('md5').update(target).digest('hex');
    res.send({success:true, bearer});
 }
 
-export async function tokenLogin(req:Request, res:Response, next:NextFunction) {
-   console.log('req.body', req.body);
-   const expectedToken = `123123h${new Date().getHours()}`;
-   console.log('req.cookies', req.cookies);
+export async function logout(req:Request, res:Response, next:NextFunction) {
+   bearer = null;
    res.send({success:true});
-} 
+}

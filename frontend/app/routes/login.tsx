@@ -7,15 +7,18 @@ import { setBearer } from "~/utils/localStorage";
 export async function clientAction({
    request,
  }: Route.ClientActionArgs) {
-   await new Promise(resolve => {setTimeout(resolve, 3000)});
+   await new Promise(resolve => {setTimeout(resolve, 1000)});
    const formData = await request.formData();
    
-   const loginResponse = await passwordLogin(formData.get('username') as string, formData.get('password') as string);
-   if (loginResponse.success) {
-      setBearer(loginResponse.bearer!);
+   const [, response] = await passwordLogin(formData.get('username') as string, formData.get('password') as string);
+   console.log('login loader response', response)
+   if (response.success) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setBearer(response.bearer!);
+      console.log('redirect 1');
       return redirect('/');
    }
-   return loginResponse;
+   return response;     // not used 
 }
 
 export default function login() {

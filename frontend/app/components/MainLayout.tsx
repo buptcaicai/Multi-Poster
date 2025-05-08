@@ -1,13 +1,13 @@
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, redirect } from "react-router";
 import MainHeader from "./MainHeader";
 import { getBearer } from "~/utils/localStorage";
 
-export default function mainLayout() {
-   const navigate = useNavigate();
+export async function clientLoader() {
+   if (getBearer() == null)
+      return redirect('/login');
+}
 
-   if (localStorage!=null && getBearer() == null) {   // localStorage is not available when SSR
-      navigate("/login");
-   }
+export default function mainLayout() {
    return <>
       <MainHeader />
       <main>

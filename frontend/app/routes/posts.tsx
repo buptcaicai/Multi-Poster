@@ -1,17 +1,18 @@
 import PostList from "~/components/PostList";
 import { getAllPosts } from "~/apis/posts";
-import { useLoaderData } from "react-router";
+import { redirect, useLoaderData } from "react-router";
 
 export async function clientLoader() {
-   const loginResponse = getAllPosts();
-   return loginResponse;
+   const [status, response] = await getAllPosts();
+   if (status === 401) {
+      return redirect('/login');
+   }
+   return response;
 }
 
 export function HydrateFallback() {
    return <div>Loading...</div>;
 }
-
-clientLoader.hydrate = true as const;
 
 export default function posts() {
    const posts = useLoaderData();
