@@ -4,9 +4,23 @@ import loginRouter from './routes/login'
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import { xss } from 'express-xss-sanitizer';
+import helmet from 'helmet';
+import hpp from 'hpp'
 
 const app = express();
 const port = process.env.PORT || 3000;
+const limiter = rateLimit({
+   max: 60,
+   windowMs: 5 * 60 * 1000,
+   message: 'Too Many requests from this IP, please try again in an hour!'
+});
+
+app.use(limiter);
+app.use(helmet());
+app.use(xss());
+app.use(hpp());  
 
 app.use(cookieParser());
 app.use(bodyParser.json());
