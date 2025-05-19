@@ -8,7 +8,7 @@ interface IUser {
    name: string;
    email: string;
    password: string;
-   role: IRole[];
+   roles: IRole[];
 }
 
 interface UserModel extends Model<IUser> {
@@ -33,7 +33,7 @@ const userSchema = new Schema<IUser, UserModel>({
       type: String,
       required: true,
    },
-   role: [{
+   roles: [{
       type: String,
       enum: ['admin', 'user'],
       default: 'user',
