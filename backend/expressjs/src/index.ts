@@ -8,6 +8,9 @@ import rateLimit from 'express-rate-limit';
 import { xss } from 'express-xss-sanitizer';
 import helmet from 'helmet';
 import hpp from 'hpp'
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;

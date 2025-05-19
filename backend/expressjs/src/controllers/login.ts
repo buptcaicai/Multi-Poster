@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 
-const username='weimin';
-const password='123456';
-
 export const loginRequiredError = 'Login Required';
 export let bearer: string | null;
 
 export async function passwordLogin(req:Request, res:Response, next:NextFunction) {
+   const username = process.env.ADMIN_USERNAME;
+   const password = process.env.ADMIN_PASSWORD;
+
    console.log('req.body', req.body);
    if (username != req.body.username || password != req.body.password) {
       return res.status(401).send({success:false, msg: loginRequiredError});
