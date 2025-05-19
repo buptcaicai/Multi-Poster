@@ -1,9 +1,10 @@
-import { Schema, model, Model } from 'mongoose';
+import { Schema, model, Model, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 type IRole = 'admin' | 'user';
 
 interface IUser {
+   _id: Types.ObjectId;
    name: string;
    email: string;
    password: string;
