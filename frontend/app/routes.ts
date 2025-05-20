@@ -5,5 +5,6 @@ export default [
    layout("components/MainLayout.tsx", [
       route("posts", "routes/posts.tsx")
    ]),
-   route("/login", "routes/login.tsx")
+   route("/login", "routes/login.tsx"),
+   route("/admin", "admin/AdminLayout.tsx")
 ] satisfies RouteConfig;

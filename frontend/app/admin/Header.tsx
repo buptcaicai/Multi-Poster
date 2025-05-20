@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { logout } from '~/apis/login';
 import { clearBearer } from '~/utils/Bearer';
 
-export default function MainHeader() {
+export default function Header() {
       const navigate = useNavigate();
    return <header className='flex place-content-between border-b-white border-b-2 mb-4 p-10 items-center'>
             <h1 className='flex gap-x-2 text-gray-200 text-6xl'>

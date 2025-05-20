@@ -75,13 +75,13 @@ userSchema.statics.createUser = async function(name: string, email: string, pass
 userSchema.statics.initAdmin = async function() {
    const name = process.env.ADMIN_USERNAME;
 
-   const existingAdmin = await this.findOne({ role: 'admin', name });
+   const existingAdmin = await this.findOne({ roles: 'admin', name });
    if (existingAdmin != null) return existingAdmin;
    
    const password = process.env.ADMIN_PASSWORD;
    const email = process.env.ADMIN_EMAIL;
    const hash = await bcrypt.hash(password as string, saltRounds);
-   const user = await this.create({ name, email, password: hash, role: 'admin' });
+   const user = await this.create({ name, email, password: hash, roles: 'admin' });
    return user;
 }
 

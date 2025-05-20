@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import crypto from 'crypto';
 import { User } from '~/models/users';
 import jwt from 'jsonwebtoken';
 
@@ -14,11 +13,11 @@ export async function passwordLogin(req:Request, res:Response, next:NextFunction
    }
 
    const jwtToken = await jwt.sign({ id: user._id, roles: user.roles }, 
-            process.env.JWT_SECRET as string, { expiresIn: '1h' });
+            process.env.JWT_SECRET as string, { expiresIn: '5s' });
 
-   const target = `${password}123123h${new Date().getHours()}`;
-   bearer = crypto.createHash('md5').update(target).digest('hex');
-   res.send({success:true, bearer});
+   const decodeToken = jwt.decode(jwtToken);
+   console.log('decodeToken', decodeToken);
+   res.send({success:true, bearer: jwtToken});
 }
 
 export async function logout(req:Request, res:Response, next:NextFunction) {

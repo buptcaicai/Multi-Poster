@@ -9,19 +9,12 @@ import { xss } from 'express-xss-sanitizer';
 import helmet from 'helmet';
 import hpp from 'hpp'
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import { User } from './models/users';
+import initDB from './db';
 
 dotenv.config();
 
 // initialize admin user
-mongoose.connect(process.env.MONGO_DB_URI as string).then(() => {
-   User.initAdmin().catch((err) => {
-      console.error('Error initializing admin user:', err);
-   });
-}).catch((err) => {
-   console.error('MongoDB connection error:', err);
-});
+initDB();
 
 const app = express();
 const port = process.env.PORT || 3000;

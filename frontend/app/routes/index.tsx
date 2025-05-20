@@ -10,7 +10,6 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-   console.log('redirect 2');
    return redirect("/posts");
 }
 

@@ -1,5 +1,5 @@
-import { getBearer } from "~/utils/localStorage";
-import { bearerHeaderKey, remote_endpoint } from "./constants";
+import { getBearerHeader } from "~/utils/Bearer";
+import { remote_endpoint } from "./constants";
 
 export async function passwordLogin(username: string, password: string) : Promise<[number, {success: boolean, bearer?: string, msg?: string}]> {
    const response = await fetch(`${remote_endpoint}/login`, {
@@ -18,8 +18,7 @@ export async function logout() {
       method: "post",
       headers: {
          'Content-Type': 'application/json',
-         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-         [bearerHeaderKey]: getBearer()!
+         ...getBearerHeader()
       },
    });
 

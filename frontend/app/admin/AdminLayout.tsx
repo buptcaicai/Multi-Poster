@@ -1,5 +1,4 @@
-import { Outlet, redirect } from "react-router";
-import MainHeader from "./MainHeader";
+import { redirect } from "react-router";
 import { getBearer } from "~/utils/Bearer";
 import { jwtDecode } from 'jwt-decode';
 
@@ -8,16 +7,11 @@ export async function clientLoader() {
    if (getBearer() == null)
       return redirect('/login');
    const decoded = jwtDecode(bearer as string) as { roles: string[] };
-   if (decoded.roles.includes('admin')) {
-      return redirect('/admin');
+   if (!decoded.roles.includes('admin')) {
+      return redirect('/');
    }
 }
 
-export default function mainLayout() {
-   return <>
-      <MainHeader />
-      <main>
-         <Outlet />
-      </main>
-   </>
+export default function adminLayout() {
+   return <div> I am admin layout</div>
 }
