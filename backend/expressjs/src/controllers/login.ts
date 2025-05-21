@@ -13,7 +13,7 @@ export async function passwordLogin(req:Request, res:Response, next:NextFunction
    }
 
    const jwtToken = await jwt.sign({ id: user._id, roles: user.roles }, 
-            process.env.JWT_SECRET as string, { expiresIn: '5s' });
+            process.env.JWT_SECRET as string, { expiresIn: '15m' });
 
    const decodeToken = jwt.decode(jwtToken);
    res.send({success:true, bearer: jwtToken});
