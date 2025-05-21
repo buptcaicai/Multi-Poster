@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { Outlet, redirect } from "react-router";
 import { getBearer } from "~/utils/Bearer";
 import { jwtDecode } from 'jwt-decode';
 
@@ -13,5 +13,5 @@ export async function clientLoader() {
 }
 
 export default function adminLayout() {
-   return <div> I am admin layout</div>
+   return <Outlet/>
 }

@@ -1,6 +1,10 @@
 import { remote_endpoint } from "./constants";
-import type { PostType } from "~/components/Post";
 import { getBearerHeader } from "~/utils/Bearer";
+
+export type PostType = {
+   name: string,
+   text: string
+}
 
 export async function getAllPosts() : Promise<[number, Array<PostType> | {success: boolean}] > {
    const response = await fetch(`${remote_endpoint}/getAllPosts`, {

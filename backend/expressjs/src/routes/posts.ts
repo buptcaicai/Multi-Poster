@@ -1,5 +1,4 @@
 import * as PostController from "~/controllers/posts"
-import * as LoginController from "~/controllers/login"
 import { verifyBearer } from "~/middlewares/bearerAuth"
 
 const express = require('express')

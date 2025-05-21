@@ -9,10 +9,12 @@ interface IUser {
    email: string;
    password: string;
    roles: IRole[];
+   createdAt: Date;
 }
 
 interface UserModel extends Model<IUser> {
-  initAdmin(): Promise<IUser>;
+  initDB(): Promise<IUser>;
+  getAllUsers(): Promise<IUser[]>;
   authenticateByNameAndPassword(name: string, password: string): Promise<IUser>;
 }
 
@@ -43,20 +45,14 @@ const userSchema = new Schema<IUser, UserModel>({
    versionKey: false,
 });
 
-userSchema.statics.findByEmail = async function(email: string) {
-   const user = await this.findOne({ email });
-   if (!user) {
-      throw new Error('User not found');
-   }
+userSchema.statics.createUser = async function(name: string, email: string, password: string) {
+   const user = await this.create({ name, email, password });
    return user;
 }
 
-userSchema.statics.findById = async function(id: string) {
-   const user = await this.findOne({ _id: id });
-   if (!user) {
-      throw new Error('User not found');
-   }
-   return user;
+userSchema.statics.getAllUsers = async function() {
+   const users = await this.find();
+   return users;
 }
 
 userSchema.statics.authenticateByNameAndPassword = async function(name: string, password: string) {  
@@ -67,22 +63,20 @@ userSchema.statics.authenticateByNameAndPassword = async function(name: string, 
    return user;
 }
 
-userSchema.statics.createUser = async function(name: string, email: string, password: string) {
-   const user = await this.create({ name, email, password });
-   return user;
-}
-
-userSchema.statics.initAdmin = async function() {
+userSchema.statics.initDB = async function() {
    const name = process.env.ADMIN_USERNAME;
-
    const existingAdmin = await this.findOne({ roles: 'admin', name });
-   if (existingAdmin != null) return existingAdmin;
+   if (existingAdmin == null) {
+      const password = process.env.ADMIN_PASSWORD;
+      const email = process.env.ADMIN_EMAIL;
+      const hash = await bcrypt.hash(password as string, saltRounds);
+      this.create({ name, email, password: hash, roles: 'admin' });
+   }
    
-   const password = process.env.ADMIN_PASSWORD;
-   const email = process.env.ADMIN_EMAIL;
-   const hash = await bcrypt.hash(password as string, saltRounds);
-   const user = await this.create({ name, email, password: hash, roles: 'admin' });
-   return user;
+   const user1 = await this.findOne({ roles: 'user', name: 'user1' });
+   if (user1 == null) {
+      this.create({ name:'user1', email:'user1@mail.com', password: '123456', roles: 'user' });
+   }
 }
 
 export const User = model<IUser, UserModel>('User', userSchema);

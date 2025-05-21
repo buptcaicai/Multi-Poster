@@ -16,7 +16,6 @@ export async function passwordLogin(req:Request, res:Response, next:NextFunction
             process.env.JWT_SECRET as string, { expiresIn: '5s' });
 
    const decodeToken = jwt.decode(jwtToken);
-   console.log('decodeToken', decodeToken);
    res.send({success:true, bearer: jwtToken});
 }
 
