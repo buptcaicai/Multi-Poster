@@ -2,16 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { loginRequiredError } from '~/controllers/login';
 import jwt from 'jsonwebtoken';
 
-export async function verifyBearer(req:Request, res:Response, next:NextFunction) {
-   console.log('verifyBearer');
-   const bearer = req.get('Authorization');
-   if (bearer == null) {
+export async function verifyAccessToken(req:Request, res:Response, next:NextFunction) {
+   const accessToken = req.cookies['AccessToken'];
+   if (accessToken == null) {
       return res.status(401).send({success:false, msg: loginRequiredError})
    }
-   const token = bearer.split(' ')[1];
-   console.log('token', token);
    try {
-      const decodedToken = jwt.verify(token as string, process.env.JWT_SECRET as string);
+      const decodedToken = jwt.verify(accessToken as string, process.env.JWT_SECRET as string);
    } catch (err) {
       console.error('error', err);
       return res.status(401).send({success:false, msg: loginRequiredError});
@@ -20,13 +17,12 @@ export async function verifyBearer(req:Request, res:Response, next:NextFunction)
 }
 
 export async function verifyAdmin(req:Request, res:Response, next:NextFunction) {
-   const bearer = req.get('Authorization');
-   if (bearer == null) {
+   const accessToken = req.cookies['AccessToken'];
+   if (accessToken == null) {
       return res.status(401).send({success:false, msg: loginRequiredError})
    }
-   const token = bearer.split(' ')[1];
    try {
-      const decodedToken = jwt.verify(token as string, process.env.JWT_SECRET as string) as {roles: string[]};
+      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET as string) as {roles: string[]};
       if (!decodedToken.roles.includes('admin')) {
          return res.status(403).send({success:false, msg: 'forbidden'});
       }

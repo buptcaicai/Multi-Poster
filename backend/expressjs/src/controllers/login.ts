@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '~/models/users';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 export const loginRequiredError = 'Login Required';
-export let bearer: string | null;
+export let refreshToken: string | null;
 
 export async function passwordLogin(req:Request, res:Response, next:NextFunction) {
    const { username, password } = req.body;
@@ -13,13 +14,37 @@ export async function passwordLogin(req:Request, res:Response, next:NextFunction
    }
 
    const jwtToken = await jwt.sign({ id: user._id, roles: user.roles }, 
-            process.env.JWT_SECRET as string, { expiresIn: '15m' });
+            process.env.JWT_SECRET as string, { expiresIn: '10s' });
 
-   const decodeToken = jwt.decode(jwtToken);
-   res.send({success:true, bearer: jwtToken});
+   refreshToken = crypto.randomBytes(32).toString('hex');
+
+   res.cookie('AccessToken', jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 20 * 1000,
+   })
+   .cookie('RefreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 60 * 60 * 1000,
+   })
+   .send({success:true, roles: user.roles});
 }
 
 export async function logout(req:Request, res:Response, next:NextFunction) {
-   bearer = null;
-   res.send({success:true});
+   res.clearCookie('AccessToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 20 * 1000,
+   })
+   .clearCookie('RefreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 60 * 60 * 1000,
+   })
+   .send({success:true});
 }

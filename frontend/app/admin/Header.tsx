@@ -1,7 +1,6 @@
 import { MdLogout, MdMessage } from 'react-icons/md';
 import { useNavigate } from 'react-router';
 import { logout } from '~/apis/login';
-import { clearBearer } from '~/utils/Bearer';
 
 export default function Header() {
       const navigate = useNavigate();
@@ -12,7 +11,6 @@ export default function Header() {
             </h1>
             <button className='flex gap-x-2 text-gray-200 text-4xl hover:cursor-pointer'
                     onClick={() => {
-                        clearBearer();
                         logout();
                         navigate("/login");
                     }}>

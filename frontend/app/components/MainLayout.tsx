@@ -1,6 +1,5 @@
 import { Outlet, redirect } from "react-router";
 import MainHeader from "./MainHeader";
-import { getBearer } from "~/utils/Bearer";
 import { jwtDecode } from 'jwt-decode';
 
 export async function clientLoader() {

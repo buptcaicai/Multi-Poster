@@ -1,5 +1,4 @@
 import { remote_endpoint } from "./constants";
-import { getBearerHeader } from "~/utils/Bearer";
 
 export type PostType = {
    name: string,
@@ -11,7 +10,6 @@ export async function getAllPosts() : Promise<[number, Array<PostType> | {succes
       method: "get",
       headers: {
          'Content-Type': 'application/json',
-         ...getBearerHeader()
       }
    });
    return [response.status, await response.json()];
@@ -22,7 +20,6 @@ export async function addPost(text:string, name:string) : Promise<[number, {succ
       method: "post",
       headers: {
          'Content-Type': 'application/json',
-         ...getBearerHeader()
       },
       body: JSON.stringify({text, name})
    });

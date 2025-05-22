@@ -1,4 +1,3 @@
-import { getBearerHeader } from "~/utils/Bearer";
 import { remote_endpoint } from "./constants";
 
 export type Users = {
@@ -14,7 +13,6 @@ export async function getAllUsers() : Promise<[number, Array<Users> | {success: 
       method: "get",
       headers: {
          'Content-Type': 'application/json',
-         ...getBearerHeader()
       }
    });
    return [response.status, await response.json()];

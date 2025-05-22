@@ -1,7 +1,6 @@
-import { getBearerHeader } from "~/utils/Bearer";
 import { remote_endpoint } from "./constants";
 
-export async function passwordLogin(username: string, password: string) : Promise<[number, {success: boolean, bearer?: string, msg?: string}]> {
+export async function passwordLogin(username: string, password: string) : Promise<[number, {success: boolean, roles?: string[], msg?: string}]> {
    const response = await fetch(`${remote_endpoint}/login`, {
       method: "post",
       headers: {
@@ -18,7 +17,6 @@ export async function logout() {
       method: "post",
       headers: {
          'Content-Type': 'application/json',
-         ...getBearerHeader()
       },
    });
 

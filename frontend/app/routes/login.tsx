@@ -2,17 +2,16 @@ import { MdMessage } from "react-icons/md";
 import classes from "~/components/Form.module.css"
 import { useActionState } from "react";
 import { passwordLogin } from "~/apis/login";
-import { setBearer } from "~/utils/Bearer";
 import { useNavigate } from "react-router";
 
 export default function LoginForm() {
    const navigate = useNavigate();
+
    const [response, submitAction, isPending] = useActionState(
       async (_ : unknown, formData: FormData) => {
          const [, response] = await passwordLogin(formData.get('username') as string, formData.get('password') as string);
          if (response.success) {
-            setBearer(response.bearer as string);
-            console.log('i am here')
+            // setRoles(response.roles);
             navigate('/', { replace: true });
          }
          return response;     // not used 

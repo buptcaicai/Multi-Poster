@@ -8,7 +8,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tsx watch src/index.ts"
+    "start": "NODE_ENV=development npx tsx watch src/index.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
