@@ -1,13 +1,15 @@
 import { createContext, useState, type ReactNode } from 'react';
 
-export const AuthContext = createContext<{roles: string[]}>({ roles: ['admin'] });
+type TAuthContext = {
+  user: {roles: string[]} | undefined;
+  setUser: React.Dispatch<React.SetStateAction<{roles: string[]} | undefined>>;
+}
+
+export const AuthContext = createContext<TAuthContext | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<string | null>(null);
-
-  const login = (user: string) => setUser(user);
-
-  return (<AuthContext.Provider value={{ roles: ['admin'] }}>
+  const [user, setUser] = useState(undefined as {roles: string[]} | undefined);
+  return (<AuthContext.Provider value={{ user, setUser }}>
       {children}
     </AuthContext.Provider>)
 };

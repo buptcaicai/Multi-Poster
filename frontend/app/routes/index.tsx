@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/index";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "~/contexts/UserRoleContext";
 
 // eslint-disable-next-line no-empty-pattern
 export function meta({ }: Route.MetaArgs) {
@@ -12,6 +13,9 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function index() {
    const navigate = useNavigate();
+   const user = useContext(AuthContext)?.user;
+   console.log('user in "/"', user);
+   
    useEffect(() => {
       navigate("/posts", { replace: true });
    }, [navigate]);

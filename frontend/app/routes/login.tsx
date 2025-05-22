@@ -1,17 +1,20 @@
 import { MdMessage } from "react-icons/md";
 import classes from "~/components/Form.module.css"
-import { useActionState } from "react";
+import { useActionState, useContext } from "react";
 import { passwordLogin } from "~/apis/login";
 import { useNavigate } from "react-router";
+import { AuthContext } from "~/contexts/UserRoleContext";
 
 export default function LoginForm() {
    const navigate = useNavigate();
+   const setUser  = useContext(AuthContext)?.setUser;
 
    const [response, submitAction, isPending] = useActionState(
       async (_ : unknown, formData: FormData) => {
          const [, response] = await passwordLogin(formData.get('username') as string, formData.get('password') as string);
-         if (response.success) {
-            // setRoles(response.roles);
+         if (response.success && response.roles) {
+            if (setUser) setUser({roles: response.roles});
+            console.log('redirect to "/"');
             navigate('/', { replace: true });
          }
          return response;     // not used 
