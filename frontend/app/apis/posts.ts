@@ -8,9 +8,10 @@ export type PostType = {
 export async function getAllPosts() : Promise<[number, Array<PostType> | {success: boolean}] > {
    const response = await fetch(`${remote_endpoint}/getAllPosts`, {
       method: "get",
+      credentials: 'include',
       headers: {
          'Content-Type': 'application/json',
-      }
+      },
    });
    return [response.status, await response.json()];
 }
@@ -20,6 +21,7 @@ export async function addPost(text:string, name:string) : Promise<[number, {succ
       method: "post",
       headers: {
          'Content-Type': 'application/json',
+         credentials: 'include'
       },
       body: JSON.stringify({text, name})
    });

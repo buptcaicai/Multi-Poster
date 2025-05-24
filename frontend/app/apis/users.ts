@@ -11,9 +11,10 @@ export type Users = {
 export async function getAllUsers() : Promise<[number, Array<Users> | {success: boolean}] > {
    const response = await fetch(`${remote_endpoint}/getAllUsers`, {
       method: "get",
+      credentials: 'include',
       headers: {
          'Content-Type': 'application/json',
-      }
+      },
    });
    return [response.status, await response.json()];
 }

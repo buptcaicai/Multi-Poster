@@ -17,34 +17,43 @@ export async function passwordLogin(req:Request, res:Response, next:NextFunction
             process.env.JWT_SECRET as string, { expiresIn: '10s' });
 
    refreshToken = crypto.randomBytes(32).toString('hex');
-
+   const sameSiteCookie = process.env.SAME_SITE_COOKIE as 'strict' | 'lax' | 'none' | undefined;  
    res.cookie('AccessToken', jwtToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: sameSiteCookie,
       maxAge: 20 * 1000,
+      domain: process.env.COOKIE_DOMAIN,
+      path: '/',
    })
    .cookie('RefreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: sameSiteCookie,
       maxAge: 7 * 60 * 60 * 1000,
+      domain: process.env.COOKIE_DOMAIN,
+      path: '/',
    })
    .send({success:true, roles: user.roles});
 }
 
 export async function logout(req:Request, res:Response, next:NextFunction) {
+   const sameSiteCookie = process.env.SAME_SITE_COOKIE as 'strict' | 'lax' | 'none' | undefined;  
    res.clearCookie('AccessToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: sameSiteCookie,
       maxAge: 20 * 1000,
+      domain: process.env.COOKIE_DOMAIN,
+      path: '/',
    })
    .clearCookie('RefreshToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: sameSiteCookie,
       maxAge: 7 * 60 * 60 * 1000,
+      domain: process.env.COOKIE_DOMAIN,
+      path: '/',
    })
    .send({success:true});
 }
