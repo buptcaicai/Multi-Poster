@@ -10,13 +10,11 @@ import { xss } from 'express-xss-sanitizer';
 import helmet from 'helmet';
 import hpp from 'hpp'
 import dotenv from 'dotenv';
-import initDB from './db';
+import { initDB, closeDB } from './db';
 
 dotenv.config();
 
 // initialize admin user
-initDB();
-
 const app = express();
 const port = process.env.PORT || 3000;
 const limiter = rateLimit({
@@ -68,6 +66,24 @@ app.use((req:Request, res: Response, next: NextFunction) => {
    res.status(404).send({error: 'endpoint not found'})
 });
 
-app.listen(port, () => {
-   console.log(`Server running at http://localhost:${port}`);
-})
+const startServer = async () => {
+   await initDB();
+
+   const server = app.listen(port, () => {
+      console.log(`Server running at http://localhost:${port}`);
+   });
+
+   const shudown = async (signal: string) => {
+      console.log(`${signal} received. Shutting down server...`);
+      await closeDB();
+      server.close(() => {
+         console.log('Server shut down gracefully.');
+         process.exit(0);
+      });
+   }
+
+   process.on('SIGTERM', shudown);
+   process.on('SIGINT', shudown);
+}
+
+startServer();

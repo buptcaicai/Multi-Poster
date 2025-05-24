@@ -1,10 +1,10 @@
-import * as fs from "fs/promises";
-import Ajv, {JSONSchemaType} from "ajv"
+import { Schema, model, Model, Types } from 'mongoose';
+import Ajv from "ajv"
 const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
 
 const PostFileName = require('path').resolve('./src/data/posts.json')
 
-const postSchema = {
+const postAjvSchema = {
    type: "object",
    properties: {
       text: {type: "string"},
@@ -14,40 +14,57 @@ const postSchema = {
    additionalProperties: false
 }
 
-const validate = ajv.compile(postSchema);
+const validate = ajv.compile(postAjvSchema);
 
-export class Post {
-   text: string
-   name: string
+interface IPost {
+   _id: Types.ObjectId;
+   text: string;
+   name: string;
+   createdAt: Date;
+   updatedAt: Date;
+}
 
-   constructor(text:string, name:string) {
-      this.text = text
-      this.name = name
+interface PostModel extends Model<IPost> {
+   initDB(): Promise<IPost>;
+   getAllPosts(): Promise<IPost[]>;
+}
+
+const postSchema = new Schema({
+   text: {
+      type: String,
+      required: true,
+   },
+   name: {
+      type: String,
+      required: true,
    }
-   
-   static isValidJson(post: string) {
-      return validate(post)
-   }
+}, {
+   timestamps: true,
+   versionKey: false,
+});
 
-   static async initDB() {
+postSchema.statics.isValidJson = function(post: string) {
+   return validate(post);
+}
+
+postSchema.statics.initDB = async function() {
+   const onePost = await this.findOne();
+   if (!onePost) {
       try {
-         await fs.access(PostFileName);
+         await Promise.all([
+            this.create({text: "Text1", name: "User1"}),
+            this.create({text: "Text2", name: "User2"}),
+            this.create({text: "Text3", name: "User3"})
+         ]);
       } catch (e) {
-         console.log('error', e)
-         await fs.writeFile(PostFileName, '[]', {flag: "w"});
+         console.error('Error initializing Post DB:', e);
       }
    }
-
-   static async fetchAll() {
-      await Post.initDB();
-      const posts:Array<Post> = JSON.parse(await fs.readFile(PostFileName, {encoding: "utf-8"}))
-      return posts
-   }
-
-   async save() {
-      await Post.initDB();
-      const posts:Array<Post> = JSON.parse(await fs.readFile(PostFileName, {encoding: "utf-8"}))
-      posts.push(this)
-      await fs.writeFile(PostFileName, JSON.stringify(posts), {encoding: "utf-8", flag: "w+"});
-   }
 }
+
+postSchema.statics.getAllPosts = async function() {
+   const posts = await this.find()
+   return posts;
+}
+
+export const Post = model<IPost, PostModel>('Post', postSchema);

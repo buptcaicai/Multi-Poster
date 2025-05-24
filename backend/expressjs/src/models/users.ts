@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 type IRole = 'admin' | 'user';
 
-interface IUser {
+export interface IUser {
    _id: Types.ObjectId;
    name: string;
    email: string;
