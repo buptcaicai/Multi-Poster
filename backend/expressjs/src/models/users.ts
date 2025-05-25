@@ -13,9 +13,10 @@ export interface IUser {
 }
 
 interface UserModel extends Model<IUser> {
-  initDB(): Promise<IUser>;
-  getAllUsers(): Promise<IUser[]>;
-  authenticateByNameAndPassword(name: string, password: string): Promise<IUser>;
+   initDB(): Promise<IUser>;
+   getAllUsers(): Promise<IUser[]>;
+   getUserById(id: string): Promise<IUser | null>;
+   authenticateByNameAndPassword(name: string, password: string): Promise<IUser>;
 }
 
 const saltRounds = 10;
@@ -53,6 +54,11 @@ userSchema.statics.createUser = async function(name: string, email: string, pass
 userSchema.statics.getAllUsers = async function() {
    const users = await this.find();
    return users;
+}
+
+userSchema.statics.getUserById = async function(id: string) {
+   const user = await this.findById(id);
+   return user;
 }
 
 userSchema.statics.authenticateByNameAndPassword = async function(name: string, password: string) {  

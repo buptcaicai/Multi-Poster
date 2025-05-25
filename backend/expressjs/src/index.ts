@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import postRouter from './routes/posts';
 import loginRouter from './routes/login'
 import userRouter from './routes/users'
+import tokenRouter from './routes/token';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -61,6 +62,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use(postRouter);
 app.use(loginRouter);
 app.use(userRouter);
+app.use(tokenRouter);
 
 app.use((req:Request, res: Response, next: NextFunction) => {
    res.status(404).send({error: 'endpoint not found'})

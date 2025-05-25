@@ -1,3 +1,4 @@
+import { fetchWithToken } from "~/utils/requestor";
 import { remote_endpoint } from "./constants";
 
 export type PostType = {
@@ -6,7 +7,7 @@ export type PostType = {
 }
 
 export async function getAllPosts() : Promise<[number, Array<PostType> | {success: boolean}] > {
-   const response = await fetch(`${remote_endpoint}/getAllPosts`, {
+   const response = await fetchWithToken(`${remote_endpoint}/getAllPosts`, {
       method: "get",
       credentials: 'include',
       headers: {
@@ -17,7 +18,7 @@ export async function getAllPosts() : Promise<[number, Array<PostType> | {succes
 }
 
 export async function addPost(text:string, name:string) : Promise<[number, {success: boolean}]>{
-   const response = await fetch(`${remote_endpoint}/addPost`, {
+   const response = await fetchWithToken(`${remote_endpoint}/addPost`, {
       method: "post",
       credentials: 'include',
       headers: {

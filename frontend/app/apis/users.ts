@@ -1,3 +1,4 @@
+import { fetchWithToken } from "~/utils/requestor";
 import { remote_endpoint } from "./constants";
 
 export type Users = {
@@ -9,7 +10,7 @@ export type Users = {
 }
 
 export async function getAllUsers() : Promise<[number, Array<Users> | {success: boolean}] > {
-   const response = await fetch(`${remote_endpoint}/getAllUsers`, {
+   const response = await fetchWithToken(`${remote_endpoint}/getAllUsers`, {
       method: "get",
       credentials: 'include',
       headers: {
