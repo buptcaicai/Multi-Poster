@@ -9,7 +9,7 @@ const sameSiteCookie = process.env.SAME_SITE_COOKIE as 'strict' | 'lax' | 'none'
 
 export async function refreshToken(res: Response, user: JWTPayload) {
    const refreshToken = crypto.randomBytes(32).toString('hex');
-   const jwtToken = generateJWTToken(user.id.toString(), user.roles);
+   const jwtToken = generateJWTToken(user.id, user.roles);
    await redisClient.set(`refresh:${refreshToken}`, user.id, { expiration: { type: 'EX', value: 3 * 24 * 60 * 60 }});
    const utcSecondsNow = Math.floor(Date.now() / 1000);
 
@@ -58,27 +58,41 @@ export async function cancelToken(res: Response) {
       })
 }
 
-export async function validateRefreshToken(req: Request): Promise<boolean> {
+export async function validateRefreshToken(req: Request, jwtPayload: JWTPayload | null): Promise<boolean> {
    const refreshToken = req.cookies['RefreshToken'];
    if (refreshToken == null) {
-      console.log('validateRefreshToken: no refresh token found');
+      if (process.env.NODE_ENV !== 'production') {
+         console.log('validateRefreshToken: no refresh token found in cookies');
+      }
       return Promise.resolve(false);
    }
    try {
       const userId = await redisClient.get(`refresh:${refreshToken}`);
       if (userId == null) {
-         console.log('validateRefreshToken: no userId found for refresh token');
+         if (process.env.NODE_ENV !== 'production') {
+            console.log('validateRefreshToken: no userId found for refresh token', refreshToken);
+         }
          return Promise.resolve(false);
       }
       if (req.user != null) {
          if (req.user.id !== userId) {
-            console.log('validateRefreshToken: userId from token does not match req.user.id');
+            if (process.env.NODE_ENV !== 'production') {
+               console.log('validateRefreshToken: userId from token does not match req.user.id', userId, req.user.id);
+            }
             return Promise.resolve(false);
          }
       } else {
          const user = await User.getUserById(userId);
          if (user == null) {
-            console.log('validateRefreshToken: no user found for userId', userId);
+            if (process.env.NODE_ENV !== 'production') {
+               console.log('validateRefreshToken: no user found for userId', userId);
+            }
+            return Promise.resolve(false);
+         }
+         if (jwtPayload != null && jwtPayload.id !== user._id.toString()) {
+            if (process.env.NODE_ENV !== 'production') {
+               console.log('validateRefreshToken: jwtPayload id does not match user._id', jwtPayload.id, user._id.toString());
+            }
             return Promise.resolve(false);
          }
          req.user = {
@@ -95,8 +109,10 @@ export async function validateRefreshToken(req: Request): Promise<boolean> {
 
 export async function verifyAccessToken(req:Request, res:Response, next:NextFunction) {
    const accessToken = req.cookies['AccessToken'];
-   console.log('accessToken', accessToken);
    if (accessToken == null) {
+      if (process.env.NODE_ENV !== 'production') {
+         console.log('verifyAccessToken: no access token found in cookies');
+      }
       return res.status(401).send({success:false, msg: loginRequiredError})
    }
    try {
