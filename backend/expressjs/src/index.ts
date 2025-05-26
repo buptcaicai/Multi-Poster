@@ -1,10 +1,11 @@
+import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import postRouter from './routes/posts';
 import loginRouter from './routes/login'
 import userRouter from './routes/users'
 import tokenRouter from './routes/token';
 import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
+import { json } from 'body-parser';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { xss } from 'express-xss-sanitizer';
@@ -12,10 +13,23 @@ import helmet from 'helmet';
 import hpp from 'hpp'
 import dotenv from 'dotenv';
 import { initDB, closeDB } from './db';
+import { JWTPayload } from './utils/jwt';
+import { ApolloServer } from '@apollo/server';
+import { buildSchema } from 'type-graphql';
+import { PostResolver } from './resolvers/PostResolvers';
+import { expressMiddleware } from '@as-integrations/express5';
+
+
+declare global {
+   namespace Express {
+      interface Request {
+         user?: JWTPayload; 
+      }
+   }
+}
 
 dotenv.config();
 
-// initialize admin user
 const app = express();
 const port = process.env.PORT || 3000;
 const limiter = rateLimit({
@@ -24,12 +38,7 @@ const limiter = rateLimit({
    message: 'Too Many requests from this IP, please try again in an hour!'
 });
 
-app.use(limiter);
-app.use(helmet());
-app.use(xss());
-app.use(hpp());  
-app.use(cookieParser());
-app.use(bodyParser.json());
+app.use(limiter, helmet(), xss(), hpp(), cookieParser(), json());
 
 const allowedOrigins = [
   process.env.FRONTEND_URL
@@ -55,30 +64,39 @@ app.use((req:Request, res: Response, next: NextFunction) => {
    next();
 });
 
-app.get('/', (req: Request, res: Response) => {
-   res.send('Hello, TypeScript Express!');
-})
+app.use(postRouter, loginRouter, userRouter, tokenRouter);
 
-app.use(postRouter);
-app.use(loginRouter);
-app.use(userRouter);
-app.use(tokenRouter);
-
-app.use((req:Request, res: Response, next: NextFunction) => {
-   res.status(404).send({error: 'endpoint not found'})
-});
 
 const startServer = async () => {
    await initDB();
 
-   const server = app.listen(port, () => {
+   const schema = await buildSchema({
+      resolvers: [PostResolver],
+      validate: true,
+   });
+
+   const apolloServer = new ApolloServer({ schema });
+   await apolloServer.start();
+
+   app.use(
+      '/graphql',
+      cors(),
+      json(),
+      expressMiddleware(apolloServer)
+     );
+   
+   app.use((req: Request, res: Response, next: NextFunction) => {
+      res.status(404).send({ error: 'endpoint not found' })
+   });
+   
+   const httpServer = app.listen(port, () => {
       console.log(`Server running at http://localhost:${port}`);
    });
 
    const shudown = async (signal: string) => {
       console.log(`${signal} received. Shutting down server...`);
       await closeDB();
-      server.close(() => {
+      httpServer.close(() => {
          console.log('Server shut down gracefully.');
          process.exit(0);
       });

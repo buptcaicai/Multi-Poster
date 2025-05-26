@@ -1,70 +1,52 @@
-import { Schema, model, Model, Types } from 'mongoose';
-import Ajv from "ajv"
-const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
+import { getModelForClass, prop, ReturnModelType } from '@typegoose/typegoose';
+import { Field, ID, ObjectType } from 'type-graphql';
 
-const PostFileName = require('path').resolve('./src/data/posts.json')
+@ObjectType()
+export class Post {
+   @Field(() => ID)
+   @prop()
+   public _id!: string;
 
-const postAjvSchema = {
-   type: "object",
-   properties: {
-      text: {type: "string"},
-      name: {type: "string"}
-   },
-   required: ["text", "name"],
-   additionalProperties: false
-}
+   @Field()
+   @prop()
+   public text!: string;
 
-const validate = ajv.compile(postAjvSchema);
+   @Field()
+   @prop()
+   public name!: string;
 
-interface IPost {
-   _id: Types.ObjectId;
-   text: string;
-   name: string;
-   createdAt: Date;
-   updatedAt: Date;
-}
+   @Field()
+   @prop()
+   public createdAt!: Date;
 
-interface PostModel extends Model<IPost> {
-   initDB(): Promise<IPost>;
-   getAllPosts(): Promise<IPost[]>;
-}
+   @Field()
+   @prop()
+   public updatedAt!: Date;
 
-const postSchema = new Schema({
-   text: {
-      type: String,
-      required: true,
-   },
-   name: {
-      type: String,
-      required: true,
-   }
-}, {
-   timestamps: true,
-   versionKey: false,
-});
-
-postSchema.statics.isValidJson = function(post: string) {
-   return validate(post);
-}
-
-postSchema.statics.initDB = async function() {
-   const onePost = await this.findOne();
-   if (!onePost) {
-      try {
-         await Promise.all([
-            this.create({text: "Text1", name: "User1"}),
-            this.create({text: "Text2", name: "User2"}),
-            this.create({text: "Text3", name: "User3"})
-         ]);
-      } catch (e) {
-         console.error('Error initializing Post DB:', e);
+   public static async initDB(this: ReturnModelType<typeof Post>) {
+      console.log('Initializing Post DB...');
+      const onePost = await this.findOne();
+      if (!onePost) {
+         try {
+            await Promise.all([
+               this.create({text: "Text1", name: "User1"}),
+               this.create({text: "Text2", name: "User2"}),
+               this.create({text: "Text3", name: "User3"})
+            ]);
+         } catch (e) {
+            console.error('Error initializing Post DB:', e);
+         }
       }
    }
+
+   public static async getAllPosts(this: ReturnModelType<typeof Post>): Promise<Post[]> {
+      const posts = await this.find()
+      return posts;
+   }
 }
 
-postSchema.statics.getAllPosts = async function() {
-   const posts = await this.find()
-   return posts;
-}
+export const PostModel = getModelForClass(Post, {
+   schemaOptions: { timestamps: true, versionKey: false }
+});
+ 
 
-export const Post = model<IPost, PostModel>('Post', postSchema);
