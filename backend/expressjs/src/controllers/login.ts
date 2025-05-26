@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { cancelToken, refreshToken } from '~/middlewares/accessTokenAuth';
 import { User } from '~/models/users';
-import { JWTPayload } from '~/utils/jtw';
+import { JWTPayload } from '~/utils/jwt';
 
 export const loginRequiredError = 'Login Required';
 

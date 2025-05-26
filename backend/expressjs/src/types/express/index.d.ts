@@ -1,4 +1,4 @@
-import { JWTPayload } from '~/utils/jtw';  // adjust your path/type
+import { JWTPayload } from '~/utils/jwt';  // adjust your path/type
 
 declare global {
     namespace Express {

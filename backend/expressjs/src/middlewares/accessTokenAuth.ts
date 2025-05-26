@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { loginRequiredError } from '~/controllers/login';
 import { redisClient } from '~/db';
 import crypto from 'crypto';
-import { decodeJWTToken, generateJWTToken, JWTPayload, verifyJWTToken } from '~/utils/jtw';
+import { decodeJWTToken, generateJWTToken, JWTPayload, verifyJWTToken } from '~/utils/jwt';
 import { User } from "~/models/users";
 
 const sameSiteCookie = process.env.SAME_SITE_COOKIE as 'strict' | 'lax' | 'none' | undefined;
