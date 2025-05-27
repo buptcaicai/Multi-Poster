@@ -17,7 +17,11 @@ export default function index() {
    console.log('user in "/"', user);
    
    useEffect(() => {
-      navigate("/posts", { replace: true });
+      if (user && user.roles && user.roles.includes('admin')) {
+         navigate("/admin", { replace: true });
+      } else {
+         navigate("/posts", { replace: true });
+      }
    }, [navigate]);
    return null;
 }

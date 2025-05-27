@@ -4,7 +4,6 @@ import { Field, ID, ObjectType } from 'type-graphql';
 @ObjectType()
 export class Post {
    @Field(() => ID)
-   @prop()
    public _id!: string;
 
    @Field()

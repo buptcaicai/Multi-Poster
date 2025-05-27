@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { createClient } from 'redis';
-import { User } from './models/users';
-import { PostModel } from './models/Posts';
+import { UserModel } from './models/User';
+import { PostModel } from './models/Post';
 
 export const redisClient = createClient({
    username: 'default',
@@ -15,7 +15,7 @@ export const redisClient = createClient({
 export async function initDB() {
    console.log('Connecting to MongoDB and Redis...');
    await mongoose.connect(process.env.MONGO_DB_URI as string);
-   await Promise.all([User.initDB(), PostModel.initDB()]);
+   await Promise.all([UserModel.initDB(), PostModel.initDB()]);
    await redisClient.connect();
    redisClient.on('error', err => console.log('Redis Client Error', err));
 }

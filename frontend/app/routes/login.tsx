@@ -14,7 +14,10 @@ export default function LoginForm() {
          const [, response] = await passwordLogin(formData.get('username') as string, formData.get('password') as string);
          if (response.success && response.roles) {
             if (setUser) setUser({roles: response.roles});
-            console.log('redirect to "/"');
+            console.log('roles', response.roles);
+            if (response.roles.includes('admin')) {
+               navigate('/admin', { replace: true });
+            }
             navigate('/', { replace: true });
          }
          return response;     // not used 

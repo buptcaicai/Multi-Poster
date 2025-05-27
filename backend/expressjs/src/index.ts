@@ -16,7 +16,8 @@ import { initDB, closeDB } from './db';
 import { JWTPayload } from './utils/jwt';
 import { ApolloServer } from '@apollo/server';
 import { buildSchema } from 'type-graphql';
-import { PostResolver } from './resolvers/PostResolvers';
+import { PostResolver } from './resolvers/PostResolver';
+import { UserResolver } from './resolvers/UserResolver';
 import { expressMiddleware } from '@as-integrations/express5';
 
 
@@ -71,7 +72,7 @@ const startServer = async () => {
    await initDB();
 
    const schema = await buildSchema({
-      resolvers: [PostResolver],
+      resolvers: [PostResolver, UserResolver],
       validate: true,
    });
 

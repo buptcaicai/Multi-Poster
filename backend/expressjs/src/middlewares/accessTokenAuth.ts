@@ -3,7 +3,7 @@ import { loginRequiredError } from '~/controllers/login';
 import { redisClient } from '~/db';
 import crypto from 'crypto';
 import { decodeJWTToken, generateJWTToken, JWTPayload, verifyJWTToken } from '~/utils/jwt';
-import { User } from "~/models/users";
+import { UserModel } from "~/models/User";
 
 const sameSiteCookie = process.env.SAME_SITE_COOKIE as 'strict' | 'lax' | 'none' | undefined;
 
@@ -82,7 +82,7 @@ export async function validateRefreshToken(req: Request, jwtPayload: JWTPayload 
             return Promise.resolve(false);
          }
       } else {
-         const user = await User.getUserById(userId);
+         const user = await UserModel.getUserById(userId);
          if (user == null) {
             if (process.env.NODE_ENV !== 'production') {
                console.log('validateRefreshToken: no user found for userId', userId);
