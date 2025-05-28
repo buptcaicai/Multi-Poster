@@ -11,6 +11,7 @@ export default function LoginForm() {
 
    const [response, submitAction, isPending] = useActionState(
       async (_ : unknown, formData: FormData) => {
+         console.log('form submitted', formData);
          const [, response] = await passwordLogin(formData.get('username') as string, formData.get('password') as string);
          if (response.success && response.roles) {
             if (setUser) setUser({roles: response.roles});

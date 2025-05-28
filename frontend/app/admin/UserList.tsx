@@ -23,8 +23,6 @@ export default function UserList({
   loaderData,
 }: Route.ComponentProps) {
   const users = loaderData as unknown as Users[]
-  console.log("users", users);
-  // console.log("UserList", status, data);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

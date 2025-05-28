@@ -1,13 +1,28 @@
 import { Post } from "./Post"
-import type { PostType } from "./Post"
 import NewPost from "./NewPost"
 import { MdPostAdd } from "react-icons/md"
 import { useState } from "react";
 import { useRevalidator } from "react-router";
+import { gql } from "@apollo/client/core";
+import * as pkg from '@apollo/client';
+const { useQuery } = pkg;
 
-export default function PostList({posts}: {posts: Array<PostType>}) {
+const GET_POSTS = gql`
+   query Post {
+    posts {
+        _id,
+        name,
+        text
+    }
+}`;
+
+export default function PostList() {
    const revalidator = useRevalidator();
    const [newPostOpen, setNewPostOpen] = useState(false);
+   const { loading, error, data } = useQuery(GET_POSTS);
+   const posts = data;
+   console.log('posts', posts);
+
    return <div>
             <NewPost open={newPostOpen} setOpen={setNewPostOpen} onSubmit={revalidator.revalidate}/>
             <div>

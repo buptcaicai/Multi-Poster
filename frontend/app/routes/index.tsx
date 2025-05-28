@@ -14,7 +14,6 @@ export function meta({ }: Route.MetaArgs) {
 export default function index() {
    const navigate = useNavigate();
    const user = useContext(AuthContext)?.user;
-   console.log('user in "/"', user);
    
    useEffect(() => {
       if (user && user.roles && user.roles.includes('admin')) {
