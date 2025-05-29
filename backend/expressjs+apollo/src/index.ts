@@ -19,8 +19,6 @@ import { buildSchema } from 'type-graphql';
 import { PostResolver } from './resolvers/PostResolver';
 import { UserResolver } from './resolvers/UserResolver';
 import { expressMiddleware } from '@as-integrations/express5';
-
-
 declare global {
    namespace Express {
       interface Request {
@@ -83,8 +81,8 @@ const startServer = async () => {
       '/graphql',
       cors(),
       json(),
-      expressMiddleware(apolloServer)
-     );
+      expressMiddleware(apolloServer, {context: async ({ req, res }) => ({ req, res })})
+   );
    
    app.use((req: Request, res: Response, next: NextFunction) => {
       res.status(404).send({ error: 'endpoint not found' })
