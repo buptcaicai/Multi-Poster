@@ -1,39 +1,25 @@
-import { Outlet, useNavigate } from "react-router";
+import { Navigate, Outlet, useNavigate } from "react-router";
 import MainHeader from "./MainHeader";
-import { AuthContext } from "~/contexts/UserRoleContext";
+import { AuthContext, type TAuthContext } from "~/contexts/UserRoleContext";
 import { useContext, useEffect } from "react";
 
 export default function UserLayout() {
-   return <>
-      <MainHeader />
-      <main>
-         <Outlet />
-      </main>
-   </>
-
-   // const navigate = useNavigate();
-   // console.log('user in "/"', user);
-   // const user = useContext(AuthContext)?.user;
+   const { user, setUser } = useContext(AuthContext) as TAuthContext;
+   console.log('user in "/"', user);
    
-   // useEffect(() => {
-   //    if (!user) {
-   //       navigate("/login", { replace: true });
-   //       return;
-   //    }
-   //    if (user && user.roles && user.roles.includes('admin')) {
-   //       navigate("/admin", { replace: true });
-   //       return;
-   //    }
-   // }, [user]);
-
-   // if (user && user.roles && !user.roles.includes('admin')) {   // this route branch is for non-admin users
-   //    return <>
-   //       <Header />
-   //       <main>
-   //          <Outlet />
-   //       </main>
-   //    </>
-   // } else {
-   //    return null;
-   // }
+   if (user && user.roles && !user.roles.includes('admin')) {   // this route branch is for non-admin users
+      if (!user.roles.includes('admin')) {
+         return <>
+            <MainHeader />
+            <main>
+               <Outlet />
+            </main>
+         </>
+      } else {
+         return <Navigate to="/admin" replace />;
+      }
+   } else {
+      setUser && setUser(undefined);
+      return <Navigate to="/login" replace />;
+   }
 }

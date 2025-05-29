@@ -15,10 +15,13 @@ import dotenv from 'dotenv';
 import { initDB, closeDB } from './db';
 import { JWTPayload } from './utils/jwt';
 import { ApolloServer } from '@apollo/server';
-import { buildSchema } from 'type-graphql';
+import { AuthChecker, buildSchema } from 'type-graphql';
 import { PostResolver } from './resolvers/PostResolver';
 import { UserResolver } from './resolvers/UserResolver';
+import { LoginResolver } from './resolvers/LoginResolver';
 import { expressMiddleware } from '@as-integrations/express5';
+import { LOGIN_REQUIRED_ERROR } from './constants';
+import { verifyJWTToken } from './utils/jwt';
 declare global {
    namespace Express {
       interface Request {
@@ -65,13 +68,36 @@ app.use((req:Request, res: Response, next: NextFunction) => {
 
 app.use(postRouter, loginRouter, userRouter, tokenRouter);
 
+export interface GQLContext {
+   user?: JWTPayload;
+   req: Request;
+   res: Response;
+};
+
+export const authChecker: AuthChecker<GQLContext> = ({ context: { user } }, roles) => {
+   // Check user
+   if (!user) {
+      // No user, restrict access
+      return false;
+   }
+
+   // Check '@Authorized()'
+   if (roles.length === 0) {
+      // Only authentication required
+      return true;
+   }
+
+   // Check '@Authorized(...)' roles overlap
+   return user.roles.some(role => roles.includes(role));
+};
 
 const startServer = async () => {
    await initDB();
 
    const schema = await buildSchema({
-      resolvers: [PostResolver, UserResolver],
-      validate: true,
+      resolvers: [PostResolver, UserResolver, LoginResolver],
+      authChecker,
+      validate: false,
    });
 
    const apolloServer = new ApolloServer({ schema });
@@ -79,9 +105,24 @@ const startServer = async () => {
 
    app.use(
       '/graphql',
-      cors(),
-      json(),
-      expressMiddleware(apolloServer, {context: async ({ req, res }) => ({ req, res })})
+      expressMiddleware(apolloServer, {
+         context: async ({ req, res }) => {
+            const accessToken = req.cookies['AccessToken'];
+            if (accessToken == null) {
+               if (process.env.NODE_ENV !== 'production') {
+                  console.log('verifyAccessToken: no access token found in cookies');
+               }
+            } else {
+               try {
+                  const user = verifyJWTToken(accessToken as string);
+                  return { user, req, res };
+               } catch (err) {
+                  console.error('error', err);
+               }
+            }
+            return { req, res };
+         }
+      })
    );
    
    app.use((req: Request, res: Response, next: NextFunction) => {

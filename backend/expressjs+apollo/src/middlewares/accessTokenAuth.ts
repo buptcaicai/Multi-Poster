@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import { loginRequiredError } from '~/controllers/login';
 import { redisClient } from '~/db';
 import crypto from 'crypto';
 import { decodeJWTToken, generateJWTToken, JWTPayload, verifyJWTToken } from '~/utils/jwt';
 import { UserModel } from "~/models/User";
+import { ADMIN_REQUIRED_ERROR, LOGIN_REQUIRED_ERROR } from '~/constants';
+import { MiddlewareFn } from 'type-graphql';
+import { GQLContext } from '..';
 
 const sameSiteCookie = process.env.SAME_SITE_COOKIE as 'strict' | 'lax' | 'none' | undefined;
+const accessTokenCookieExp = 20 * 1000;
+const refreshTokenCookieExp = 3 * 24 * 60 * 60 * 1000; // 3 days
 
 export async function refreshToken(res: Response, user: JWTPayload) {
    const refreshToken = crypto.randomBytes(32).toString('hex');
@@ -17,7 +21,7 @@ export async function refreshToken(res: Response, user: JWTPayload) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: sameSiteCookie,
-      maxAge: 20 * 1000,
+      maxAge: accessTokenCookieExp,
       domain: process.env.COOKIE_DOMAIN,
       path: '/',
    })
@@ -33,7 +37,7 @@ export async function refreshToken(res: Response, user: JWTPayload) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: sameSiteCookie,
-      maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
+      maxAge: refreshTokenCookieExp,
       domain: process.env.COOKIE_DOMAIN,
       path: '/',
    });
@@ -44,18 +48,17 @@ export async function cancelToken(res: Response) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: sameSiteCookie,
-      maxAge: 20 * 1000,
+      maxAge: accessTokenCookieExp,
+      domain: process.env.COOKIE_DOMAIN,
+      path: '/',
+   }).clearCookie('RefreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: sameSiteCookie,
+      maxAge: refreshTokenCookieExp,
       domain: process.env.COOKIE_DOMAIN,
       path: '/',
    })
-      .clearCookie('RefreshToken', {
-         httpOnly: true,
-         secure: process.env.NODE_ENV === 'production',
-         sameSite: sameSiteCookie,
-         maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days,
-         domain: process.env.COOKIE_DOMAIN,
-         path: '/',
-      })
 }
 
 export async function validateRefreshToken(req: Request, jwtPayload: JWTPayload | null): Promise<boolean> {
@@ -107,20 +110,74 @@ export async function validateRefreshToken(req: Request, jwtPayload: JWTPayload 
    }
 }
 
-export async function verifyAccessToken(req:Request, res:Response, next:NextFunction) {
+export const requireLogin: MiddlewareFn<GQLContext> = async ({ context }) => {
+   if (context.user == null) {
+      if (process.env.NODE_ENV !== 'production') {
+         console.log('requireLogin: no user found in request');
+      }
+      throw new Error(LOGIN_REQUIRED_ERROR);
+   }
+}
+
+export const requireAdmin: MiddlewareFn<GQLContext> = async ({ context }) => {
+   if (context.user == null || !context.user.roles.includes('admin')) {
+      if (process.env.NODE_ENV !== 'production') {
+         console.log('requireAdmin: no user found in request or user is not admin');
+      }
+      throw new Error(LOGIN_REQUIRED_ERROR);
+   }
+}
+
+export async function verifyGQLAccessToken({ req, res }: { req: Request, res: Response }, next: NextFunction) {
    const accessToken = req.cookies['AccessToken'];
    if (accessToken == null) {
       if (process.env.NODE_ENV !== 'production') {
          console.log('verifyAccessToken: no access token found in cookies');
       }
-      return res.status(401).send({success:false, msg: loginRequiredError})
+      throw new Error(LOGIN_REQUIRED_ERROR);
    }
    try {
       const decodedToken = verifyJWTToken(accessToken as string);
       req.user = decodedToken;
    } catch (err) {
       console.error('error', err);
-      return res.status(401).send({success:false, msg: loginRequiredError});
+      throw new Error(LOGIN_REQUIRED_ERROR);
+   }
+   return next();
+}
+
+export async function verifyGQLAdmin(req: Request, res: Response, next: NextFunction) {
+   const accessToken = req.cookies['AccessToken'];
+   if (accessToken == null) {
+      return res.status(401).send({ success: false, msg: LOGIN_REQUIRED_ERROR })
+   }
+   try {
+      const decodedToken = verifyJWTToken(accessToken);
+      if (!decodedToken.roles.includes('admin')) {
+         throw new Error(ADMIN_REQUIRED_ERROR)
+      }
+      req.user = decodedToken;
+   } catch (err) {
+      console.error('error', err);
+      return res.status(401).send({ success: false, msg: LOGIN_REQUIRED_ERROR });
+   }
+   next();
+}
+
+export async function verifyAccessToken(req:Request, res:Response, next:NextFunction) {
+   const accessToken = req.cookies['AccessToken'];
+   if (accessToken == null) {
+      if (process.env.NODE_ENV !== 'production') {
+         console.log('verifyAccessToken: no access token found in cookies');
+      }
+      return res.status(401).send({success:false, msg: LOGIN_REQUIRED_ERROR})
+   }
+   try {
+      const decodedToken = verifyJWTToken(accessToken as string);
+      req.user = decodedToken;
+   } catch (err) {
+      console.error('error', err);
+      return res.status(401).send({success:false, msg: LOGIN_REQUIRED_ERROR});
    }
    next();
 }
@@ -128,7 +185,7 @@ export async function verifyAccessToken(req:Request, res:Response, next:NextFunc
 export async function verifyAdmin(req:Request, res:Response, next:NextFunction) {
    const accessToken = req.cookies['AccessToken'];
    if (accessToken == null) {
-      return res.status(401).send({success:false, msg: loginRequiredError})
+      return res.status(401).send({success:false, msg: LOGIN_REQUIRED_ERROR})
    }
    try {
       const decodedToken = verifyJWTToken(accessToken);
@@ -138,7 +195,7 @@ export async function verifyAdmin(req:Request, res:Response, next:NextFunction) 
       req.user = decodedToken;
    } catch (err) {
       console.error('error', err);
-      return res.status(401).send({success:false, msg: loginRequiredError});
+      return res.status(401).send({success:false, msg: LOGIN_REQUIRED_ERROR});
    }
    next();
 }
