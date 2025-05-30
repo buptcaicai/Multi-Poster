@@ -33,6 +33,7 @@ export default function PostList() {
    if (error) {
       if ('UNAUTHENTICATED' === (error?.cause?.extensions as { code?: string })?.code) {
          setUser && setUser(undefined);
+         console.log('redirecting 2 to /login');
          return <Navigate to="/login" replace />
       }
       content = <p className="text-red-500">Error loading posts: {error.message}</p>;

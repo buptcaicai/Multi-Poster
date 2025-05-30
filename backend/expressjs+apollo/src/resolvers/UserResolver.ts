@@ -1,7 +1,7 @@
 import { Authorized, Query, Resolver } from "type-graphql";
 import { User, UserModel } from "~/models/User";
 
-@Authorized()
+@Authorized(["admin"])
 @Resolver(() => User)
 export class UserResolver {
     @Query(() => [User])

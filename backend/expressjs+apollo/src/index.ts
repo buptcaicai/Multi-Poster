@@ -1,9 +1,5 @@
 import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
-import postRouter from './routes/posts';
-import loginRouter from './routes/login'
-import userRouter from './routes/users'
-import tokenRouter from './routes/token';
 import cookieParser from 'cookie-parser';
 import { json } from 'body-parser';
 import cors from 'cors';
@@ -22,13 +18,7 @@ import { LoginResolver } from './resolvers/LoginResolver';
 import { expressMiddleware } from '@as-integrations/express5';
 import { LOGIN_REQUIRED_ERROR } from './constants';
 import { verifyJWTToken } from './utils/jwt';
-declare global {
-   namespace Express {
-      interface Request {
-         user?: JWTPayload; 
-      }
-   }
-}
+import { validateRefreshToken } from './middlewares/accessTokenAuth';
 
 dotenv.config();
 
@@ -66,10 +56,9 @@ app.use((req:Request, res: Response, next: NextFunction) => {
    next();
 });
 
-app.use(postRouter, loginRouter, userRouter, tokenRouter);
-
 export interface GQLContext {
    user?: JWTPayload;
+   error?: string;
    req: Request;
    res: Response;
 };
@@ -108,19 +97,27 @@ const startServer = async () => {
       expressMiddleware(apolloServer, {
          context: async ({ req, res }) => {
             const accessToken = req.cookies['AccessToken'];
+            console.log('AccessToken:', accessToken);
             if (accessToken == null) {
                if (process.env.NODE_ENV !== 'production') {
                   console.log('verifyAccessToken: no access token found in cookies');
                }
             } else {
-               try {
-                  const user = verifyJWTToken(accessToken as string);
-                  return { user, req, res };
-               } catch (err) {
-                  console.error('error', err);
+               const result = verifyJWTToken(accessToken as string);
+               if (result.ok) {
+                  return { user: result.payload, req, res };
+               }
+               if (!result.ok) {
+                  if (result.reason === 'expired' || result.reason === 'notActiveYet') {  // this is normal
+                     if (!await validateRefreshToken(req, result.untrustedPayload)) {  // access token does not agree with refresh token
+                        throw new Error(LOGIN_REQUIRED_ERROR);
+                     }
+                  } else {    // corrupted token, unacceptable
+                     throw new Error(LOGIN_REQUIRED_ERROR);
+                  }
                }
             }
-            return { req, res };
+            return { req, res, user: null};
          }
       })
    );

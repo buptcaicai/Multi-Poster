@@ -1,7 +1,7 @@
 import { Arg, Authorized, Mutation, Query, Resolver } from "type-graphql";
 import { Post, PostModel } from "~/models/Post";
 
-@Authorized()
+@Authorized(["user"])
 @Resolver(() => Post)
 export class PostResolver {
     @Query(() => [Post])

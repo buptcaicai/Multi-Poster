@@ -64,7 +64,7 @@ export async function validateRefreshToken(req: Request, jwtPayload: JWTPayload 
       if (process.env.NODE_ENV !== 'production') {
          console.log('validateRefreshToken: no refresh token found in cookies');
       }
-      return Promise.resolve(false);
+      return false;
    }
    try {
       const userId = await redisClient.get(`refresh:${refreshToken}`);
@@ -72,14 +72,14 @@ export async function validateRefreshToken(req: Request, jwtPayload: JWTPayload 
          if (process.env.NODE_ENV !== 'production') {
             console.log('validateRefreshToken: no userId found for refresh token', refreshToken);
          }
-         return Promise.resolve(false);
+         return false;
       }
       if (req.user != null) {
          if (req.user.id !== userId) {
             if (process.env.NODE_ENV !== 'production') {
                console.log('validateRefreshToken: userId from token does not match req.user.id', userId, req.user.id);
             }
-            return Promise.resolve(false);
+            return false;
          }
       } else {
          const user = await UserModel.getUserById(userId);
@@ -87,23 +87,23 @@ export async function validateRefreshToken(req: Request, jwtPayload: JWTPayload 
             if (process.env.NODE_ENV !== 'production') {
                console.log('validateRefreshToken: no user found for userId', userId);
             }
-            return Promise.resolve(false);
+            return false;
          }
          if (jwtPayload != null && jwtPayload.id !== user._id.toString()) {
             if (process.env.NODE_ENV !== 'production') {
                console.log('validateRefreshToken: jwtPayload id does not match user._id', jwtPayload.id, user._id.toString());
             }
-            return Promise.resolve(false);
+            return false;
          }
          req.user = {
             id: user._id.toString(),
             roles: user.roles,
          } as JWTPayload;
       }
-      return Promise.resolve(true);
+      return true;
    } catch (err) {
       console.error('validateRefreshToken error:', err);
-      return Promise.resolve(false);
+      return false;
    }
 }
 

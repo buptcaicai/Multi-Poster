@@ -2,6 +2,7 @@ import { useState } from "react";
 import Modal from "~/component/Modal";
 import classes from "./Form.module.css"
 import { gql, useMutation } from "@apollo/client";
+import { Navigate } from "react-router-dom";
 
 const ADD_POSTS = gql`
    mutation Post ($text: String!, $name: String!) {
@@ -14,9 +15,14 @@ const ADD_POSTS = gql`
 export default function NewPost({open, setOpen, onSubmit}: {open: boolean, setOpen: (b:boolean) => void, onSubmit: () => void}) {
    const [newPost, setPost] = useState('');
    const [newName, setName] = useState('');
-   const [addPost] = useMutation(ADD_POSTS);
+   const [addPost, {error}] = useMutation(ADD_POSTS);
 
    const buttonStyle = "bg-purple-950 text-white p-3 m-2 font-bold hover:bg-transparent hover:cursor-pointer";
+
+   if (error) {
+      console.error('Error adding post:', error);
+      return <Navigate to="/login" replace />;
+   }  
 
    return  <Modal width="w-[30rem]" height="h-[30rem]" isVisible={open} setVisible={setOpen}>
             <form className="bg-purple-700 rounded-2xl w-[100%] h-[100%] p-3" 
