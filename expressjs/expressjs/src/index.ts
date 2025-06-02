@@ -14,12 +14,9 @@ import hpp from 'hpp'
 import dotenv from 'dotenv';
 import { initDB, closeDB } from './db';
 import { JWTPayload } from './utils/jwt';
-import { ApolloServer } from '@apollo/server';
 import { buildSchema } from 'type-graphql';
 import { PostResolver } from './resolvers/PostResolver';
 import { UserResolver } from './resolvers/UserResolver';
-import { expressMiddleware } from '@as-integrations/express5';
-
 
 declare global {
    namespace Express {
@@ -76,16 +73,6 @@ const startServer = async () => {
       validate: true,
    });
 
-   const apolloServer = new ApolloServer({ schema });
-   await apolloServer.start();
-
-   app.use(
-      '/graphql',
-      cors(),
-      json(),
-      expressMiddleware(apolloServer)
-     );
-   
    app.use((req: Request, res: Response, next: NextFunction) => {
       res.status(404).send({ error: 'endpoint not found' })
    });

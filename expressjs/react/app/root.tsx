@@ -10,9 +10,6 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { AuthProvider } from "./contexts/UserRoleContext";
-import { ApolloClient, gql, InMemoryCache } from "@apollo/client/core";
-import * as pkg from '@apollo/client';
-const { ApolloProvider } = pkg; 
 
 export const links: Route.LinksFunction = () => [
    { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -45,32 +42,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
    );
 }
 
-const apolloClient = new ApolloClient({
-   uri: `${import.meta.env.VITE_REMOTE_ENDPOINT}/graphql`,
-   cache: new InMemoryCache(),
-});
-
-// client
-//    .query({
-//       query: gql`
-//       query Post {
-//           posts {
-//               _id,
-//               name,
-//               text
-//           }
-//       }
-//     `,
-//    }).then((result) => console.log('GraphQL Result:', result));
-
-
-
 export default function App() {
-   return <ApolloProvider client={apolloClient}>
-         <AuthProvider>
+   return <AuthProvider>
             <Outlet />
          </AuthProvider>
-      </ApolloProvider>
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
