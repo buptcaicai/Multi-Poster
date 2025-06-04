@@ -1,5 +1,5 @@
-import * as LoginController from "~/controllers/login"
-import { verifyAccessToken } from "~/middlewares/accessTokenAuth"
+import * as LoginController from "../controllers/login"
+import { verifyAccessToken } from "../middlewares/accessTokenAuth"
 
 const express = require('express')
 

@@ -1,4 +1,7 @@
 import 'reflect-metadata';
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
 import { json } from 'body-parser';
@@ -7,7 +10,6 @@ import rateLimit from 'express-rate-limit';
 import { xss } from 'express-xss-sanitizer';
 import helmet from 'helmet';
 import hpp from 'hpp'
-import dotenv from 'dotenv';
 import { initDB, closeDB } from './db';
 import { JWTPayload } from './utils/jwt';
 import { ApolloServer } from '@apollo/server';
@@ -20,7 +22,6 @@ import { LOGIN_REQUIRED_ERROR } from './constants';
 import { verifyJWTToken } from './utils/jwt';
 import { validateRefreshToken } from './middlewares/accessTokenAuth';
 
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;

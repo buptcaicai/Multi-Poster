@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { loginRequiredError } from '~/controllers/login';
-import { redisClient } from '~/db';
+import { loginRequiredError } from '../controllers/login';
+import { redisClient } from '../db';
 import crypto from 'crypto';
-import { decodeJWTToken, generateJWTToken, JWTPayload, verifyJWTToken } from '~/utils/jwt';
-import { UserModel } from "~/models/User";
+import { decodeJWTToken, generateJWTToken, JWTPayload, verifyJWTToken } from '../utils/jwt';
+import { UserModel } from "../models/User";
 
 const sameSiteCookie = process.env.SAME_SITE_COOKIE as 'strict' | 'lax' | 'none' | undefined;
 

@@ -1,4 +1,4 @@
-import * as TokenController from "~/controllers/token"
+import * as TokenController from "../controllers/token"
 
 const express = require('express')
 

@@ -1,5 +1,4 @@
 import { getModelForClass, prop, ReturnModelType } from '@typegoose/typegoose';
-import { Field, ID, ObjectType, registerEnumType } from 'type-graphql';
 import bcrypt from 'bcrypt';
 
 const saltRounds = 10;
@@ -8,38 +7,24 @@ enum UserRole {
    ADMIN = 'admin',
    USER = 'user'
 }
-
-registerEnumType(UserRole, {
-   name: "UserRole",
-   description: "The roles available for users",
-});
-
-@ObjectType()
 export class User {
-   @Field(() => ID)
    public _id!: string;
 
-   @Field()
    @prop()
    public name!: string;
 
-   @Field()
    @prop()
    public email!: string;
 
-   @Field()
    @prop()
    public password!: string;
 
-   @Field(type => [UserRole])
    @prop({ enum: UserRole , type: String, required: true})
    public roles!: [UserRole];
 
-   @Field()
    @prop()
    public createdAt!: Date;
 
-   @Field()
    @prop()
    public updatedAt!: Date;
 

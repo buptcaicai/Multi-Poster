@@ -1,4 +1,4 @@
-import { PostModel } from "~/models/Post";
+import { PostModel } from "../models/Post";
 import { Request, Response, NextFunction } from 'express';
 
 export async function getAllPosts(req:Request, res:Response, next:NextFunction) {

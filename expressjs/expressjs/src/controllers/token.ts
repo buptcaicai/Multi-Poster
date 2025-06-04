@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { refreshToken, validateRefreshToken } from '~/middlewares/accessTokenAuth';
-import { JWTPayload, verifyJWTToken } from '~/utils/jwt';
+import { refreshToken, validateRefreshToken } from '../middlewares/accessTokenAuth';
+import { JWTPayload, verifyJWTToken } from '../utils/jwt';
 
 export async function refreshAccessToken(req:Request, res:Response) {
    const accessToken = req.cookies['AccessToken'];

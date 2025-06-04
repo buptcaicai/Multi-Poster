@@ -1,5 +1,5 @@
-import * as PostController from "~/controllers/posts"
-import { verifyAccessToken } from "~/middlewares/accessTokenAuth"
+import * as PostController from "../controllers/posts"
+import { verifyAccessToken } from "../middlewares/accessTokenAuth"
 
 const express = require('express')
 const router = express.Router()
