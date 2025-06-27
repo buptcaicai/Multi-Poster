@@ -1,11 +1,11 @@
 import { Response } from "express";
 import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
-import { UserModel } from "~/models/User";
-import { cancelToken, getUserFromRefreshToken, refreshToken, validateRefreshToken } from '~/middlewares/accessTokenAuth';
+import { UserModel } from "../models/User";
+import { cancelToken, getUserFromRefreshToken, refreshToken, validateRefreshToken } from '../middlewares/accessTokenAuth';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { GQLContext } from "..";
-import { LOGIN_REQUIRED_ERROR } from "~/constants";
-import { JWTPayload } from "~/utils/jwt";
+import { LOGIN_REQUIRED_ERROR } from "../constants";
+import { JWTPayload } from "../utils/jwt";
 
 @ObjectType()
 class LoginResponse {

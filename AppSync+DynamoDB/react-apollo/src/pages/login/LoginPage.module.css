@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.label {
+   @apply block text-gray-300 p-1 m-1 font-bold text-3xl justify-center rounded-2xl;
+}
+
+.input {
+   @apply bg-amber-500 p-1 justify-center border-purple-200 rounded-2xl w-[100%] text-purple-950 text-2xl;
+}

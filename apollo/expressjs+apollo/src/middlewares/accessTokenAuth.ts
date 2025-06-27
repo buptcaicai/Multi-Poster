@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { redisClient } from '~/db';
+import { redisClient } from '../db';
 import crypto from 'crypto';
-import { generateJWTToken, JWTPayload} from '~/utils/jwt';
-import { UserModel } from "~/models/User";
-import { ADMIN_REQUIRED_ERROR, LOGIN_REQUIRED_ERROR } from '~/constants';
+import { generateJWTToken, JWTPayload} from '../utils/jwt';
+import { UserModel } from "../models/User";
+import { ADMIN_REQUIRED_ERROR, LOGIN_REQUIRED_ERROR } from '../constants';
 import { MiddlewareFn } from 'type-graphql';
 import { GQLContext } from '..';
 
