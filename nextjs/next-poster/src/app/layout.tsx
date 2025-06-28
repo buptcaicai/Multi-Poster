@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { initDB } from "@/app/lib/db";
+import { initDB } from "@/lib/db";
+import { UserInfoProvider } from "@/contexts/UserInfoContext";
 
 initDB().catch((error) => {
   console.error("Failed to initialize database:", error);
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
      <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-purple-800 dark:bg-gray-950 m-8`}>
-           {children}
+           <UserInfoProvider>{children}</UserInfoProvider>
         </body>
      </html>
   );

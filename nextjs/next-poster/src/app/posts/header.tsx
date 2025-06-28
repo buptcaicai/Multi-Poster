@@ -1,8 +1,11 @@
 'use client';
+import { logout } from "@/actions/authActions";
+import { useUserInfo } from "@/contexts/UserInfoContext";
+import { redirect } from "next/navigation";
 import { MdLogout, MdMessage } from "react-icons/md";
-// import { logout } from "~/apis/login";
 
 export default function PostHeader() {
+   const { setUserInfo } = useUserInfo();
    return (
       <header className="flex place-content-between border-b-white border-b-2 mb-4 p-10 items-center">
          <h1 className="flex gap-x-2 text-gray-200 text-6xl">
@@ -11,10 +14,10 @@ export default function PostHeader() {
          </h1>
          <button
             className="flex gap-x-2 text-gray-200 text-4xl hover:cursor-pointer"
-            onClick={() => {
-               throw new Error("Logout functionality not implemented yet.");
-               // logout();
-               // navigate("/login");
+            onClick={async () => {
+               setUserInfo(null);
+               await logout();
+               redirect("/login");
             }}
          >
             <MdLogout />

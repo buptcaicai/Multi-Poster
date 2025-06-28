@@ -1,19 +1,37 @@
 "use client";
 import { MdMessage } from "react-icons/md";
-import { useActionState } from "react";
-import { authenticate } from "./actions";
-import { useSearchParams } from "next/navigation";
+import { useActionState, useContext, useEffect } from "react";
+import { redirect, useSearchParams } from "next/navigation";
+import { authenticate } from "@/actions/authActions";
+import { useUserInfo } from "@/contexts/UserInfoContext";
 
 const labelStyle = "block text-gray-300 p-1 m-1 font-bold text-3xl justify-center rounded-2xl";
 const inputStyle = "bg-amber-500 p-1 justify-center border-purple-200 rounded-2xl w-[100%] text-purple-950 text-2xl";
 
 export default function LoginPage() {
+   const { userInfo, setUserInfo } = useUserInfo();
    const searchParams = useSearchParams();
    const callbackUrl = searchParams.get("callbackUrl") || "/";
-   const [data, formAction, isPending] = useActionState(authenticate, undefined);
-   if (data) {
-      console.log("Login data:", data);
+   const [resultUserInfo, formAction, isPending] = useActionState(authenticate, undefined);
+
+   if (userInfo) {
+      if (userInfo.roles.includes("admin")) {
+         console.log("User is admin, redirecting to /admin");
+         redirect("/admin");
+      } else {
+         console.log("User is not admin, redirecting to /posts");
+         redirect("/posts");
+      }
    }
+
+   useEffect(() => {
+      if (!isPending && resultUserInfo) {
+         console.log("Login data:", resultUserInfo);
+         setUserInfo(resultUserInfo);
+         redirect("/");
+      }
+   }, [resultUserInfo, isPending, setUserInfo]);
+
    return (
       <div className="h-screen flex flex-col items-center justify-center">
          <h1 className="flex gap-x-2 text-gray-200 text-6xl w-[100%] justify-center">
@@ -32,7 +50,7 @@ export default function LoginPage() {
                </p>
                <input type="hidden" name="redirectTo" value={callbackUrl} />
                <div className="flex items-center justify-end">
-                  {data && <span className="text-red-500 text-xl font-medium text-center">{data}</span>}
+                  {resultUserInfo && <span className="text-red-500 text-xl font-medium text-center">{JSON.stringify(resultUserInfo)}</span>}
                   <button
                      type="submit"
                      className="flex items-center justify-center ml-3 mr-3 p-3 m-2 bg-purple-950 text-white text-2xl 

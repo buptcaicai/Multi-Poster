@@ -140,5 +140,8 @@ export async function verifyAdmin(req:Request, res:Response, next:NextFunction) 
       console.error('error', err);
       return res.status(401).send({success:false, msg: loginRequiredError});
    }
+
    next();
 }
+
+/* create middleware to check if user is logged in and has a valid access token */
