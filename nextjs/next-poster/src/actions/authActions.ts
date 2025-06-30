@@ -2,6 +2,7 @@
 
 import { cancelToken, refreshToken, UserInfo } from "@/lib/sessions";
 import { UserModel } from "@/models/User";
+import { redirect } from "next/navigation";
 
 export async function authenticate(
    _prevState: UserInfo | undefined | null,
@@ -20,4 +21,5 @@ export async function authenticate(
 
 export async function logout() {
    await cancelToken();
+   redirect("/login");
 }

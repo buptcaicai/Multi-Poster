@@ -1,4 +1,7 @@
 "use client";
+import { logout } from "@/actions/authActions";
+// import { logout } from "@/actions/authActions";
+import { redirect } from "next/navigation";
 import { MdLogout, MdMessage } from "react-icons/md";
 
 export default function Header() {
@@ -10,8 +13,9 @@ export default function Header() {
          </h1>
          <button
             className="flex gap-x-2 text-gray-200 text-4xl hover:cursor-pointer"
-            onClick={() => {
-               throw new Error("Logout functionality not implemented yet.");
+            onClick={async () => {
+               await logout();
+               redirect("/login");
             }}
          >
             <MdLogout />

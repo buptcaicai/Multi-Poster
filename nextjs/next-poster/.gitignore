@@ -69,3 +69,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 >>>>>>> Stashed changes
+
+*storybook.log
+storybook-static

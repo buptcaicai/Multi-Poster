@@ -15,7 +15,6 @@ export function UserInfoProvider({ children }: { children: React.ReactNode }) {
    useEffect(() => {
       (async () => {
          const userInfo = await checkOrRefreshToken();
-         console.log("refresh user in provider");
          setUserInfo(userInfo);
       })();
    }, []);
